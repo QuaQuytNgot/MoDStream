@@ -199,10 +199,41 @@
     comparison.classList.toggle("side-view", !split);
     document.getElementById("split-control").hidden = !split;
   }));
-  document.getElementById("comparison-range").addEventListener("input", (event) => {
-    const percent = Number(event.target.value);
+  const comparisonRange = document.getElementById("comparison-range");
+  const setComparisonPosition = (value) => {
+    const percent = Math.round(Math.max(0, Math.min(100, value)));
     comparison.style.setProperty("--split-position", `${percent}%`);
+    comparisonRange.value = String(percent);
     document.getElementById("comparison-position").textContent = `${percent}%`;
+  };
+  comparisonRange.addEventListener("input", (event) => {
+    setComparisonPosition(Number(event.target.value));
+  });
+  let dragPointer = null;
+  const positionFromPointer = (event) => {
+    const bounds = comparison.getBoundingClientRect();
+    setComparisonPosition((event.clientX - bounds.left) / bounds.width * 100);
+  };
+  comparison.addEventListener("pointerdown", (event) => {
+    if (!comparison.classList.contains("split-view") || !event.isPrimary || event.button !== 0) return;
+    dragPointer = event.pointerId;
+    comparison.setPointerCapture(event.pointerId);
+    positionFromPointer(event);
+    event.preventDefault();
+  });
+  comparison.addEventListener("pointermove", (event) => {
+    if (event.pointerId === dragPointer) positionFromPointer(event);
+  });
+  const stopDragging = (event) => {
+    if (event.pointerId !== dragPointer) return;
+    dragPointer = null;
+    if (comparison.hasPointerCapture(event.pointerId)) comparison.releasePointerCapture(event.pointerId);
+  };
+  comparison.addEventListener("pointerup", stopDragging);
+  comparison.addEventListener("pointercancel", stopDragging);
+  comparison.addEventListener("lostpointercapture", () => { dragPointer = null; });
+  comparison.addEventListener("dragstart", (event) => {
+    if (comparison.classList.contains("split-view")) event.preventDefault();
   });
 
   const renderChart = (id, key, layout, max) => {

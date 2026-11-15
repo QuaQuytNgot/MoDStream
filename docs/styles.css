@@ -18,3 +18,6 @@
 @media(max-width:700px){.quality-levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.quality-level-button{width:100%;min-width:0}}
 @media(max-width:380px){.quality-level-button{padding-inline:8px;gap:4px}.quality-level-button span{font-size:8px}}
 .layout-figure{margin-block:22px;max-width:950px}.layout-figure img{width:100%;height:auto}.layout-figure figcaption{font-size:10px;color:var(--muted);margin-top:9px}
+.split-view{cursor:ew-resize;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.split-view img{-webkit-user-drag:none}
+.split-view .split-divider span{pointer-events:auto;touch-action:none;cursor:ew-resize}
